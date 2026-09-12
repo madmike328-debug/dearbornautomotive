@@ -1125,7 +1125,9 @@
         <div class="form-wrap">
           <p class="form-title">Schedule Service</p>
           <p class="form-sub">Fill out the form and we'll confirm by phone within one business hour.</p>
-          <form class="contact-form" id="appointmentForm" novalidate>
+          <form class="contact-form" id="appointmentForm" name="appointment" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+            <input type="hidden" name="form-name" value="appointment" />
+            <p style="position:absolute;left:-9999px;" aria-hidden="true"><label>Leave blank: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
             <div class="form-row">
               <div class="form-group">
                 <label for="fname">Your Name *</label>
@@ -1408,38 +1410,23 @@ form.addEventListener('submit', async (e) => {
   submitBtn.classList.add('loading');
   formStatus.className = 'form-status';
 
-  // Replace with your Formspree endpoint when ready:
-  // const ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
-  // For now, simulate a successful submission:
-  await new Promise(r => setTimeout(r, 1200));
-
-  /*
-  // Uncomment this block when you have your Formspree ID:
   try {
-    const res = await fetch(ENDPOINT, {
+    const body = new URLSearchParams(new FormData(form)).toString();
+    await fetch('/', {
       method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, email: document.getElementById('femail').value, vehicle, service, message: document.getElementById('fmessage').value })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
     });
-    if (res.ok) {
-      formStatus.textContent = '✅ Request sent! We\'ll call you within 1 business hour.';
-      formStatus.className = 'form-status success';
-      form.reset();
-    } else {
-      throw new Error('Server error');
-    }
-  } catch(err) {
+    formStatus.textContent = '✅ Request sent! We\'ll call you within 1 business hour.';
+    formStatus.className = 'form-status success';
+    form.reset();
+  } catch (err) {
     formStatus.textContent = '❌ Error sending. Please call us at (313) 563-1111.';
     formStatus.className = 'form-status error';
+  } finally {
+    submitBtn.textContent = '📅 Request Appointment';
+    submitBtn.classList.remove('loading');
   }
-  */
-
-  // TEMP: Show success state until Formspree is wired
-  formStatus.textContent = '✅ Request received! We will call you within 1 business hour.';
-  formStatus.className = 'form-status success';
-  form.reset();
-  submitBtn.textContent = '📅 Request Appointment';
-  submitBtn.classList.remove('loading');
 });
 </script>
 </body>
